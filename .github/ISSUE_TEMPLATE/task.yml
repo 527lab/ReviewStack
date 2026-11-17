@@ -1,0 +1,83 @@
+name: 任務
+description: 文件、重構、測試、雜務或無法歸類為功能／缺陷的工作。
+title: ""
+labels: ["type:chore"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        適用於文件、重構、測試、CI 或維護工作。標題請以動詞開頭，例如「補上上傳 API 的單元測試」。
+        此範本會先套用 `type:chore`；若實際是文件、重構或測試，請改成 `type:docs`、`type:refactor` 或 `type:test`。
+        詳細規則見 [CONTRIBUTING.md](https://github.com/527lab/ReviewStack/blob/main/CONTRIBUTING.md)。
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 為什麼要做這項任務？現況有什麼問題或缺口？
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 驗收條件
+      description: 怎樣才算完成？請列出可檢查的條件。
+      placeholder: |
+        - [ ] ……
+        - [ ] ……
+    validations:
+      required: true
+  - type: dropdown
+    id: actual_type
+    attributes:
+      label: 實際類型
+      description: 若不是雜務，開完 Issue 後請把標籤改成對應的 type:*。
+      options:
+        - chore（雜務／維護／設定）
+        - docs（文件）
+        - refactor（重構）
+        - test（測試）
+        - ci（CI）
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 相依的 Issue
+      description: 必須先完成或會互相影響的 Issue。沒有請填「無」。
+      value: "無"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 範圍
+      description: 主要影響的模組，開完 Issue 後也請補上對應的 area:* 標籤。
+      multiple: true
+      options:
+        - frontend
+        - backend
+        - ai
+        - storage
+        - infra
+        - 尚不確定
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先順序
+      options:
+        - high
+        - medium
+        - low
+      default: 1
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 補充說明
+      description: 參考資料或其他備註，選填。
+    validations:
+      required: false

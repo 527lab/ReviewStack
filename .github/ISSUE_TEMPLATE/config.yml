@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 協作規範
+    url: https://github.com/527lab/ReviewStack/blob/main/CONTRIBUTING.md
+    about: 開 Issue 前請先閱讀 commit、Issue 與 PR 規則。

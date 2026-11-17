@@ -1,0 +1,82 @@
+name: 缺陷
+description: 回報錯誤或非預期行為。
+title: "修正 "
+labels: ["type:bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        請提供可重現的步驟與預期結果。標題請以動詞開頭，例如「修正縮圖載入失敗」。
+        詳細規則見 [CONTRIBUTING.md](https://github.com/527lab/ReviewStack/blob/main/CONTRIBUTING.md)。
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 發生了什麼事？在哪個頁面、功能或環境？影響有多大？
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟
+      description: 請列出他人也能跟著做的步驟。
+      placeholder: |
+        1. 開啟……
+        2. 點選……
+        3. 看到……
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期結果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 實際結果
+      description: 可附錯誤訊息、記錄或截圖。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 驗收條件
+      description: 怎樣才算修正好？例如「依重現步驟操作後不再出現錯誤，並補上測試」。
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 相依的 Issue
+      description: 必須先完成或會互相影響的 Issue。沒有請填「無」。
+      value: "無"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 範圍
+      description: 主要影響的模組，開完 Issue 後也請補上對應的 area:* 標籤。
+      multiple: true
+      options:
+        - frontend
+        - backend
+        - ai
+        - storage
+        - infra
+        - 尚不確定
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先順序
+      options:
+        - high
+        - medium
+        - low
+      default: 0
+    validations:
+      required: true

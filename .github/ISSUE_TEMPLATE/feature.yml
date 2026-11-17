@@ -1,0 +1,71 @@
+name: 功能
+description: 提議一個可獨立驗收的新功能或改進。
+title: "新增 "
+labels: ["type:feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        請把範圍收成一個可獨立驗收的小任務。標題請以動詞開頭，例如「新增瑕疵標記轉退件單」。
+        詳細規則見 [CONTRIBUTING.md](https://github.com/527lab/ReviewStack/blob/main/CONTRIBUTING.md)。
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 為什麼要做這件事？現在的使用情境或痛點是什麼？
+      placeholder: 目前審圖者標記瑕疵後，還要手動填寫退件單……
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 驗收條件
+      description: 怎樣才算完成？請列出可檢查的條件。
+      placeholder: |
+        - [ ] 審圖者可在圖片上框出瑕疵
+        - [ ] 可將已標記的瑕疵一鍵轉成退件單
+        - [ ] 有對應的測試或可重現的手動驗證步驟
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 相依的 Issue
+      description: 必須先完成或會互相影響的 Issue。沒有請填「無」。
+      placeholder: 需先完成 #12；沒有則填「無」
+      value: "無"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 範圍
+      description: 主要影響的模組，開完 Issue 後也請補上對應的 area:* 標籤。
+      multiple: true
+      options:
+        - frontend
+        - backend
+        - ai
+        - storage
+        - infra
+        - 尚不確定
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先順序
+      options:
+        - high
+        - medium
+        - low
+      default: 1
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 補充說明
+      description: 設計想法、參考資料、截圖或其它備註，選填。
+    validations:
+      required: false
