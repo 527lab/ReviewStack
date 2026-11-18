@@ -1,24 +1,37 @@
 # ReviewStack 系統架構
 
-> 狀態：草稿（範本）｜負責人：@DavidWu94｜對應 issue：#2
+> 狀態：草稿｜負責人：@DavidWu94｜對應 issue：#2
+> 範圍：元件架構、審圖流程、角色權限。資料表見 #11，API 規格見 #12。
 > 標註 `TODO` 的地方待討論後填寫；修改請走 PR。
 
 ## 1. 目標與範圍
 
-- **一句話定位**：AI 在圖上框出瑕疵，審圖者一鍵轉成退件單；並從審圖紀錄學出團隊的審圖標準。
-- **M1（第一次口試，大三下）**：上傳 → 審圖框選瑕疵 → 轉退件單 → 重交 → 通過；AI 瑕疵定位雛形。
-- **M2（第二次口試，大四上）**：學習團隊審圖標準、標籤與資產管理、部署與測試、選做功能。
-- **不做（或選做）**：線上修圖（選做）、TODO
+- **一句話定位**：需求以工單派給產圖者；AI 在圖上框出瑕疵，審圖者一鍵轉成退件單；並從審圖紀錄學出團隊的審圖標準。
+- **M1（第一次口試，大三下）**：開工單 → 產圖者依工單上傳 → 審圖框選瑕疵 → 轉退件單 → 重交 → 通過；AI 瑕疵定位雛形。
+- **M2（第二次口試，大四上）**：學習團隊審圖標準、通訊軟體通知（Discord 優先）、標籤與資產管理、部署與測試。
+- **選做**：線上修圖。
+- **不做**：TODO
 
-## 2. 角色與權限
+## 2. 名詞
+
+| 名詞 | 說明 |
+|---|---|
+| 工單 | 需求方開給產圖者的作圖需求：說明、參考圖、規格、數量、期限、指派對象 |
+| 提交 | 產圖者針對工單上傳的一張圖，可多次重交成為多個版本 |
+| 退件單 | 審圖者依瑕疵標記產生的修改要求，附在該次提交上 |
+| 瑕疵標記 | 圖上的框選區域，來源為 AI 或人工 |
+
+## 3. 角色與權限
 
 | 角色 | 可以做 | 不能做 |
 |---|---|---|
-| 產圖者 | 上傳圖片、查看退件單、重交新版本 | 審圖、改別人的圖 |
+| 需求方／管理員 | 開工單、指派產圖者、結案、管理使用者與標籤、還原軟刪除 | TODO |
+| 產圖者 | 查看指派給自己的工單、依工單上傳與重交、查看退件單 | 審圖、改別人的圖 |
 | 審圖者 | 框選瑕疵、通過／退件、套用 AI 建議 | 刪除圖片 |
-| 管理員 | 管理使用者與專案、標籤、還原軟刪除 | TODO |
 
-## 3. 元件架構
+TODO：需求方是否獨立成一個角色，或由管理員兼任。
+
+## 4. 元件架構
 
 ```mermaid
 flowchart LR
@@ -26,24 +39,45 @@ flowchart LR
   B --> D[(PostgreSQL)]
   B --> S[(MinIO<br/>圖片物件儲存)]
   B -->|HTTP| A[AI 推論服務<br/>David 主機本地模型]
+  B -->|事件| N[通知服務]
+  N -->|Webhook / Bot| DC[Discord]
+  N -.->|之後擴充| O[其他通訊軟體]
   S -.->|Rclone 備份| BK[(備份)]
 ```
 
 | 元件 | 技術 | 職責 | 部署位置 |
 |---|---|---|---|
-| 前端 | React + Tailwind | 清單、審圖標註介面、退件單 | TODO |
-| 後端 | FastAPI | 權限、審圖流程、API | TODO |
-| 資料庫 | PostgreSQL | 結構化資料、瑕疵座標（JSONB） | TODO |
-| 物件儲存 | MinIO | 原圖、縮圖、各版本 | TODO |
+| 前端 | React + Tailwind | 工單、清單、審圖標註介面、退件單 | TODO |
+| 後端 | FastAPI | 權限、工單與審圖流程、API、發出事件 | TODO |
+| 資料庫 | PostgreSQL | 結構化資料（詳見 #11） | TODO |
+| 物件儲存 | MinIO | 參考圖、提交圖與各版本 | TODO |
 | AI 服務 | TODO（待 #4 選型） | 瑕疵定位、分數 | David 主機 |
+| 通知服務 | TODO（Webhook 或 Bot） | 把工單與審圖事件推到通訊軟體 | TODO |
 
-**AI 服務離線時**：後端降級為純人工審圖，不阻擋流程。
+- **AI 服務離線時**：後端降級為純人工審圖，不阻擋流程。
+- **通知失敗時**：只記錄並重試，不影響工單與審圖流程。
 
-## 4. 審圖流程狀態
+## 5. 工單流程
 
 ```mermaid
 stateDiagram-v2
-  [*] --> 待審: 產圖者上傳
+  [*] --> 開立: 需求方建立工單
+  開立 --> 進行中: 指派產圖者
+  進行中 --> 待審: 產圖者提交
+  待審 --> 進行中: 有提交被退件
+  待審 --> 已完成: 所需張數皆通過
+  已完成 --> 結案: 需求方確認
+  開立 --> 取消
+  進行中 --> 取消
+  結案 --> [*]
+  取消 --> [*]
+```
+
+## 6. 提交與審圖流程
+
+```mermaid
+stateDiagram-v2
+  [*] --> 待審: 產圖者依工單上傳
   待審 --> AI分析中: 送 AI（可選）
   AI分析中 --> 待審: 回傳瑕疵建議
   待審 --> 退件: 審圖者框選瑕疵並轉退件單
@@ -54,53 +88,17 @@ stateDiagram-v2
   封存 --> [*]
 ```
 
-## 5. 資料模型（初稿）
+## 7. 通知事件（M2，Discord 優先）
 
-```mermaid
-erDiagram
-  USER ||--o{ IMAGE : uploads
-  PROJECT ||--o{ IMAGE : contains
-  IMAGE ||--o{ IMAGE_VERSION : has
-  IMAGE_VERSION ||--o{ REVIEW : reviewed_in
-  REVIEW ||--o{ DEFECT : marks
-  REVIEW ||--o| REJECTION : produces
-  IMAGE }o--o{ TAG : tagged
-```
+| 事件 | 通知對象 |
+|---|---|
+| 工單指派 | 被指派的產圖者 |
+| 提交待審 | 審圖者 |
+| 退件 | 產圖者（附退件單連結） |
+| 工單完成 | 需求方 |
+| 工單逾期 | 產圖者與需求方 |
 
-| 資料表 | 主要欄位 | 備註 |
-|---|---|---|
-| user | id, name, email, role | 角色：producer / reviewer / admin |
-| project | id, name | TODO：是否需要多專案 |
-| image | id, project_id, uploader_id, status, deleted_at | 軟刪除用 deleted_at |
-| image_version | id, image_id, version_no, object_key, width, height | 每次重交一個版本 |
-| review | id, version_id, reviewer_id, decision, created_at | decision：pass / reject |
-| defect | id, review_id, type, severity, bbox (JSONB), source | source：ai / human |
-| rejection | id, review_id, summary, suggestions | 由 defect 自動彙整 |
-| tag / image_tag | id, name, source | AI 標籤與人工標籤 |
-
-## 6. 主要 API（初稿）
-
-| 方法 | 路徑 | 說明 |
-|---|---|---|
-| POST | /api/images | 上傳圖片（#7） |
-| GET | /api/images | 清單與篩選（#8） |
-| POST | /api/images/{id}/versions | 重交新版本 |
-| POST | /api/versions/{id}/ai-analyze | 送 AI 分析 |
-| POST | /api/versions/{id}/reviews | 審圖：框選瑕疵、通過或退件 |
-| GET | /api/rejections/{id} | 查看退件單 |
-
-## 7. AI 推論服務介面（待 #4、#6）
-
-```json
-// POST /infer  (multipart: image)
-{
-  "defects": [
-    {"type": "hand", "bbox": [x, y, w, h], "confidence": 0.87}
-  ],
-  "model": "TODO",
-  "elapsed_ms": 0
-}
-```
+TODO：Discord 帳號如何與系統使用者綁定；用頻道 Webhook 還是 Bot 私訊。
 
 ## 8. 部署與環境
 
@@ -111,12 +109,14 @@ erDiagram
 ## 9. 非功能需求
 
 - 單張圖片上限：TODO MB；格式：PNG / JPG / WebP
-- 圖片與 AI 分析不送第三方雲端
+- 圖片與 AI 分析不送第三方雲端；通知只送文字與系統連結，不附原圖
 - TODO：效能、同時使用人數
 
 ## 10. 待決事項
 
 - [ ] 前端與後端的部署位置
 - [ ] 是否支援多專案
+- [ ] 需求方是否獨立角色
+- [ ] 通知方式（Webhook 或 Bot）與帳號綁定
 - [ ] AI 模型（#4）
 - [ ] 瑕疵類型定義（#5）
