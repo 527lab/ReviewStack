@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { listImages } from '../api/images.ts'
 import { ImageCard } from '../components/ImageCard.tsx'
 import { StatusFilterBar } from '../components/StatusFilter.tsx'
-import { countByStatus, filterImages, sortByUploadedAtDesc } from '../lib/images.ts'
+import { countByStatus, filterImages, sortByUploadedAtDesc } from '../utils/images.ts'
 import { REVIEW_STATUS_LABEL, type ImageAsset, type StatusFilter } from '../types/image.ts'
 
 export function ImageListPage() {

@@ -1,5 +1,5 @@
 import type { ImageAsset } from '../types/image.ts'
-import { formatUploadedAt } from '../lib/formatUploadedAt.ts'
+import { formatUploadedAt } from '../utils/formatUploadedAt.ts'
 import { StatusBadge } from './StatusBadge.tsx'
 
 export function ImageCard({ image }: { image: ImageAsset }) {
