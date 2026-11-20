@@ -16,37 +16,33 @@ type StatusFilterBarProps = {
 
 export function StatusFilterBar({ value, counts, onChange }: StatusFilterBarProps) {
   return (
-    <div>
-      <p id="status-filter-label" className="mb-2 text-sm font-medium text-slate-700">
+    <div
+      className="inline-flex flex-wrap gap-px bg-neutral-300 p-px"
+      role="group"
+      aria-labelledby="status-filter-label"
+    >
+      <span id="status-filter-label" className="sr-only">
         審圖狀態
-      </p>
-      <div className="flex flex-wrap gap-2" role="group" aria-labelledby="status-filter-label">
-        {OPTIONS.map((option) => {
-          const selected = option.value === value
-          return (
-            <button
-              key={option.value}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => onChange(option.value)}
-              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700 ${
-                selected
-                  ? 'border-slate-900 bg-slate-900 text-white'
-                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-              }`}
-            >
-              {option.label}
-              <span
-                className={`rounded-full px-1.5 text-xs tabular-nums ${
-                  selected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
-                }`}
-              >
-                {counts[option.value]}
-              </span>
-            </button>
-          )
-        })}
-      </div>
+      </span>
+      {OPTIONS.map((option) => {
+        const selected = option.value === value
+        return (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => onChange(option.value)}
+            className={`px-2.5 py-1 text-[13px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-800 ${
+              selected ? 'bg-neutral-800 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-100'
+            }`}
+          >
+            {option.label}
+            <span className={`ml-1 tabular-nums ${selected ? 'text-neutral-300' : 'text-neutral-500'}`}>
+              {counts[option.value]}
+            </span>
+          </button>
+        )
+      })}
     </div>
   )
 }

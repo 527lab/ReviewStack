@@ -4,17 +4,17 @@ import { StatusBadge } from './StatusBadge.tsx'
 
 export function ImageCard({ image }: { image: ImageAsset }) {
   return (
-    <article className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="aspect-square bg-slate-100">
+    <article className="min-w-0 border border-neutral-300 bg-white">
+      <div className="aspect-[4/3] bg-neutral-200">
         <img src={image.thumbnailUrl} alt="" className="h-full w-full object-cover" />
       </div>
-      <div className="space-y-2 p-3">
-        <h2 className="truncate text-sm font-medium text-slate-900" title={image.filename}>
+      <div className="space-y-1 px-2 py-1.5">
+        <p className="truncate text-[13px] text-neutral-900" title={image.filename}>
           {image.filename}
-        </h2>
-        <p className="text-xs text-slate-500">
-          上傳時間{' '}
-          <time className="tabular-nums text-slate-700" dateTime={image.uploadedAt}>
+        </p>
+        <p className="text-xs text-neutral-500">
+          上傳{' '}
+          <time className="tabular-nums" dateTime={image.uploadedAt}>
             {formatUploadedAt(image.uploadedAt)}
           </time>
         </p>

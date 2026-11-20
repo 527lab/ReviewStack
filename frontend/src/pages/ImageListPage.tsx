@@ -29,34 +29,25 @@ export function ImageListPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-4 sm:px-6">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-900 text-sm font-semibold text-white">
-            RS
+    <div className="min-h-screen bg-neutral-100 text-neutral-900">
+      <header className="border-b border-neutral-300 bg-white">
+        <div className="flex h-10 items-center gap-2 px-4 text-sm">
+          <span className="font-medium">ReviewStack</span>
+          <span className="text-neutral-400" aria-hidden="true">
+            /
           </span>
-          <div>
-            <p className="text-sm font-semibold leading-tight">ReviewStack</p>
-            <p className="text-xs text-slate-500">審圖資產</p>
-          </div>
+          <h1 className="font-normal">圖片清單</h1>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight">圖片清單</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            依上傳時間由新到舊排列。後端 API 完成前，這份清單使用假資料。
-          </p>
-        </div>
-
+      <main className="px-4 py-3">
         {error ? (
-          <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          <p role="alert" className="border-l-2 border-red-700 px-3 py-2 text-sm text-red-800">
             {error}
           </p>
         ) : images === null ? (
-          <p role="status" className="text-sm text-slate-600">
-            正在載入圖片清單…
+          <p role="status" className="py-2 text-sm text-neutral-600">
+            載入中…
           </p>
         ) : (
           <ImageList images={images} filter={filter} onFilterChange={setFilter} />
@@ -80,17 +71,19 @@ function ImageList({
   const filterLabel = filter === 'all' ? '全部' : REVIEW_STATUS_LABEL[filter]
 
   return (
-    <div className="space-y-5">
-      <StatusFilterBar value={filter} counts={counts} onChange={onFilterChange} />
-      <p className="text-sm text-slate-600" aria-live="polite">
-        顯示 {filtered.length} 張圖片
-      </p>
+    <div>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <StatusFilterBar value={filter} counts={counts} onChange={onFilterChange} />
+        <p className="text-xs tabular-nums text-neutral-500" aria-live="polite">
+          {filtered.length} 張
+        </p>
+      </div>
       {filtered.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center text-sm text-slate-500">
-          {filter === 'all' ? '目前沒有圖片。' : `沒有「${filterLabel}」的圖片。`}
+        <p className="py-8 text-sm text-neutral-500">
+          {filter === 'all' ? '目前沒有圖片。' : `沒有${filterLabel}的圖片。`}
         </p>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((image) => (
             <li key={image.id}>
               <ImageCard image={image} />
